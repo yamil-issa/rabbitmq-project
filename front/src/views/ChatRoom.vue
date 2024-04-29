@@ -2,7 +2,7 @@
     <div class="chat-view">
       <h1 class="chat-room-title">{{ chatRoom.chatRoomName }}</h1>
       <!-- Display delete button for admin -->
-    <button v-if="isAdmin" @click="deleteChatRoom">Delete Chat Room</button>
+    <!-- <button v-if="isAdmin" @click="deleteChatRoom">Delete Chat Room</button>-->
       <div class="message-container">
         <!-- Display messages here -->
         <div v-for="message in messages" :key="message.timestamp" class="message">

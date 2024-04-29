@@ -1,6 +1,6 @@
 <template>
   <div class="zen-chat">
-    <h1>ZenChat</h1>
+    <h1>Chat</h1>
     <form @submit.prevent="handleSubmit">
       <input v-model="pseudo" type="text" placeholder="your pseudo" />
       <button type="submit">Validate</button>
