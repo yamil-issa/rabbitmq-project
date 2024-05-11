@@ -1,8 +1,6 @@
 <template>
     <div class="chat-view">
-      <h1 class="chat-room-title">{{ chatRoom.chatRoomName }}</h1>
-      <!-- Display delete button for admin -->
-    <!-- <button v-if="isAdmin" @click="deleteChatRoom">Delete Chat Room</button>-->
+      <h1 class="chat-room-title">Chat Room</h1>
       <div class="message-container">
         <!-- Display messages here -->
         <div v-for="message in messages" :key="message.timestamp" class="message">
@@ -23,47 +21,11 @@
 
   export default {
     data() {
-      return {
-        messages: [], // Array to store messages
-        newMessage: '', // Variable to store the new message input
-        userId: '', // Variable to store the user ID
-        chatRoom: [], // Variable to store the chat room details
-        isAdmin: false, // Variable to check if the user is the admin
-        pseudo: '', // Variable to store the user pseudo
-      };
+     
     },
     
-    mounted() {
 
-    // Retrieve user Id from query parameters
-    this.userId = Number(this.$route.query.userId);
-    // Retrieve chat room Id from query parameters
-    const chatRoomId = this.$route.query.chatRoomId;
-
-    // Retrieve username with the user Id
-    axios.get(`http://localhost:9000/api/user/${this.userId}`).then((response) => {
-      const data = response.data || {};
-      this.pseudo = data.username;
-    });
         
-    this.fetchLatestMessages();
-    setInterval(this.fetchLatestMessages, 1000);
-    axios.get(`http://localhost:9000/api/chat-room/${chatRoomId}`).then((response) => {
-        const data = response.data || {};
-        // Update the chatRoom data with the fetched details
-        this.chatRoom = {
-          id: data.id,
-          adminId: data.adminId,
-          chatRoomName: data.chatRoomName,
-          participants: data.participants || [],
-          messages: data.messages || [],
-        };
-        // Check if the user is the admin
-        this.isAdmin = this.chatRoom.adminId === this.userId;
-        
-        this.messages = this.chatRoom.messages;
-      });
-    },
 
     methods: {
       sendMessage() {
@@ -116,28 +78,6 @@
           this.messages = this.chatRoom.messages;
         });
       },
-
-      deleteChatRoom() {
-        // Check if the user is the admin
-        if (this.isAdmin) {
-          // Call the backend API to delete the chat room
-          axios.delete(`http://localhost:9000/api/chat-room/${this.chatRoom.id}/delete`, {
-            data: {
-              adminId: this.userId,
-            },
-          })
-            .then(() => {
-              // Redirect to the main page
-              alert('Chat room deleted successfully.');
-              this.$router.push({path: '/main', query: { pseudo: this.pseudo }});
-            })
-            .catch((error) => {
-              console.error('Error deleting chat room:', error);
-            });
-        } else {
-          alert('Only the admin can delete the chat room.');
-        }
-      }, 
   },
 };
   </script>

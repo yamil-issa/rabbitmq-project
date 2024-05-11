@@ -1,11 +1,11 @@
-import { containsSpaces, isNegativeNumber, isNotDefined } from "../utils";
+import { containsSpaces, isNotDefined } from "../utils";
 import { User } from "./user";
 import { UserService } from "./user.service";
 
 export class UserController {
     constructor(private userService: UserService) {}
 
-    add(username: string): User {
+    async add(username: string): Promise<User> {
         if (isNotDefined(username)) {
             throw new Error("username is not defined.");
         }
@@ -14,25 +14,19 @@ export class UserController {
             throw new Error("username contains spaces.");
         }
 
-        return this.userService.add(username);
-    }
-
-    getById(id: number): User | null {
-        if (isNegativeNumber(id)) {
-            throw new Error("id is a negative number.");
+        try {
+            return await this.userService.add(username);
+        } catch (error) {
+            throw new Error("Error adding user: " + (error as Error).message); 
         }
-
-        return this.userService.getById(id);
     }
 
-    updateUsername(id: number, username: string): User | null {
+    async getByUsername(username: string): Promise<User | null> {
         if (isNotDefined(username)) {
             throw new Error("username is not defined.");
         }
-        
-        if (containsSpaces(username)) {
-            throw new Error("username contains spaces.");
-        }
-        return this.userService.updateUsername(id, username);
+
+        return await this.userService.getByUsername(username);
     }
+
 }

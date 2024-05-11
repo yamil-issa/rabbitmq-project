@@ -1,7 +1,6 @@
 <template>
   <div>
     <h1>ZenChat</h1>
-    <button class="default_button" @click="showCreateChatRoomModal">Create a ChatRoom</button>
     <p>Welcome, {{ pseudo }}!</p>
     <div class="chat-room-grid">
       <chat-room-card v-for="chatRoom in chatRooms" :key="chatRoom.id" :chatRoom="chatRoom" :user="user" />

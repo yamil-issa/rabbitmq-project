@@ -1,14 +1,17 @@
 <template>
   <div class="zen-chat">
-    <h1>Chat</h1>
+    <h1>ZenChat</h1>
     <form @submit.prevent="handleSubmit">
-      <input v-model="pseudo" type="text" placeholder="your pseudo" />
+      <input v-model="pseudo" type="text" placeholder="your username" />
       <button type="submit">Validate</button>
     </form>
   </div>
 </template>
 
 <script>
+
+import axios from 'axios';
+
 export default {
   data() {
     return {
@@ -16,10 +19,48 @@ export default {
     };
   },
   methods: {
-    handleSubmit() {
-      // Redirect to the main page with pseudo as a query parameter
-      this.$router.push({ path: '/main', query: { pseudo: this.pseudo } });
+    createUser() {
+      axios
+        .post('http://localhost:9000/api/user/add', {
+          username: this.pseudo,
+        })
+        .then((response) => {
+          this.user = response.data;
+        })
+        .catch((error) => {
+          console.error('Error creating user:', error);
+        });
     },
+
+    async getUser() {
+      try {
+        const response = await axios.get('http://localhost:9000/api/user', {
+          data: { username: this.pseudo },
+        });
+        return response.data;
+      } catch (error) {
+        if (error.response && error.response.status === 404) {
+          return null; 
+        } else {
+          throw error; 
+        }
+      }
+    },
+
+    handleSubmit() {
+      this.handleUser();
+      // Redirect to chat room if the user exists
+      this.$router.push({ path: '/chat', query: { pseudo: this.pseudo } });
+    },
+
+    handleUser() {
+      // check if the user exists if not create it
+      const user = this.getUser();
+      if (!user) {
+        this.createUser();
+      }
+
+    }
   },
 };
 </script>

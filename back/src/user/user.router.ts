@@ -10,39 +10,32 @@ export class UserRouter {
     }
 
     private configureRoutes(): void {
-        this.router.get('/:id', (req, res, next) => {
+        this.router.get('/', async (req, res, next) => {
             try {
-                const result = this.userController.getById(parseInt(req.params.id));
-                res.status(200).json(result);
-
-            }catch (error: unknown) {
-                next(error);
-            }
-        
-        });
-
-        this.router.post('/add', (req, res, next) => {
-            try {
-                const result = this.userController.add(req.body.username);
-                res.status(201).json(result);
-
-            }catch (error: unknown) {
-                next(error);
-            }
-        
-        });
-
-        this.router.put('/:id/update', (req, res, next) => {
-            try {
-                const result = this.userController.updateUsername(parseInt(req.params.id), req.body.username);
+                const result = await this.userController.getByUsername(req.body.username);
                 if (result) {
                     res.status(200).json(result);
                 } else {
-                    res.status(404).json({ message: "User not found." });
+                    res.status(404).json({ message: "User not found.", code: 404 });
                 }
-            } catch (error: unknown) {
-                next(error);
+            } catch (error: any) {
+                const statusCode = 500;
+                const errorMessage = error.message;
+                res.status(statusCode).json({ message: errorMessage, code: statusCode });
             }
+        });
+
+        this.router.post('/add', async (req, res, next) => {
+            try {
+                const result = await this.userController.add(req.body.username);
+                res.status(201).json(result);
+
+            }catch (error:any) {
+                const statusCode = 400;
+                const errorMessage = error.message;
+                res.status(statusCode).json({ message: errorMessage, code: statusCode });
+            }
+        
         });
     }
 }
