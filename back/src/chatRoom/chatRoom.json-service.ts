@@ -87,8 +87,28 @@ export class ChatRoomJsonService implements ChatRoomService {
     }
 
     async getMessages(): Promise<{ userId: number; username: string; message: string; date: string; }[]> {
-      return this.messages;
+        if (this.messages.length === 0) {
+            await this.fetchMessagesFromRabbitMQ();
+        }
+        return this.messages;
     }
+
+    async fetchMessagesFromRabbitMQ(): Promise<void> {
+        try {
+            const messages = await this.channel.get(this.queueName, { noAck: true });
+            if (messages) {
+                messages.forEach((msg: any) => {
+                    const receivedMessage: { userId: number; username: string; message: string; date: string } = JSON.parse(msg.content.toString());
+                    this.messages.push(receivedMessage);
+                    console.log('Received message:', receivedMessage);
+                });
+            }
+        } catch (error) {
+            console.error('Error fetching messages from RabbitMQ:', error);
+            throw new Error('Error fetching messages from RabbitMQ: ' + error);
+        }
+    }
+
 
     async consumeMessagesFromRabbitMQ() {
         await this.channel.assertExchange(this.exchangeName, 'direct', { durable: true });
