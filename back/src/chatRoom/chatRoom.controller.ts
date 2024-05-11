@@ -1,16 +1,10 @@
-import { User } from "../user/user";
-import { ChatRoom } from "./chatRoom";
 import { ChatRoomService } from "./chatRoom.service";
-import { containsSpaces, isNegativeNumber, isNotDefined } from "../utils";
+import { isNotDefined } from "../utils";
 
 
 export class ChatRoomController {
     constructor(private chatRoomService: ChatRoomService) {}
 
-
-    joinChatRoom(username: string): boolean {
-        return this.chatRoomService.joinChatRoom(username);
-    }
 
     async sendMessage(username: string, message: string): Promise<{ userId: number; username: string; message: string; date: string; } | null> {
         if (isNotDefined(message)) {
@@ -18,5 +12,10 @@ export class ChatRoomController {
         }
         const sentMessage = await this.chatRoomService.sendMessage(username, message);
         return sentMessage; 
+    }
+
+    async getMessages(): Promise<{ userId: number; username: string; message: string; date: string; }[]> {
+        const messages = await this.chatRoomService.getMessages();
+        return messages;
     }
 }

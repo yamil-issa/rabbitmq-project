@@ -10,20 +10,6 @@ export class ChatRoomRouter {
 
     private configureRoutes(): void {
 
-        this.router.post('/:id/join', (req, res, next) => {
-            try {
-                const { username } = req.body;
-                const result = this.chatRoomController.joinChatRoom(username);
-                if (result) {
-                    res.status(200).json(result);
-                } else {
-                    res.status(404).json({ message: "Chat room not found." });
-                }
-            } catch (error: unknown) {
-                next(error);
-            }
-        });
-
         this.router.post('/send-message', async (req, res, next) => {
             try {
                 const { username, message } = req.body;
@@ -33,6 +19,15 @@ export class ChatRoomRouter {
                 } else {
                     res.status(404).json({ message: "Chat room not found or user not a participant." });
                 }
+            } catch (error: unknown) {
+                next(error);
+            }
+        });
+
+        this.router.get('/get-messages', async (req, res, next) => {
+            try {
+                const messages = await this.chatRoomController.getMessages();
+                res.status(200).json(messages);
             } catch (error: unknown) {
                 next(error);
             }

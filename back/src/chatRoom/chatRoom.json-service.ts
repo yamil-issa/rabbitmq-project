@@ -1,19 +1,21 @@
-import { User } from "../user/user";
 import { UserJsonService } from "../user/user.json-service";
-import { ChatRoom } from "./chatRoom";
 import { ChatRoomService } from "./chatRoom.service";
 
 const amqp = require('amqplib');
 
 export class ChatRoomJsonService implements ChatRoomService {
     private channel: any;
-    private chatRoom: ChatRoom;
+    private queueName = "chat-messages";
+    private exchangeName = "chat-exchange";
+    private messages: { userId: number; username: string; message: string; date: string; }[] = [];
+
 
     constructor() {
-        this.chatRoom = new ChatRoom(1, [], []);
         this.setupRabbitMQ()
             .then(() => this.consumeMessagesFromRabbitMQ())
             .catch(error => console.error('Error setting up RabbitMQ:', error));
+
+        this.messages = this.messages || [];
         
     }
 
@@ -79,26 +81,30 @@ export class ChatRoomJsonService implements ChatRoomService {
       
         const newMessage = { userId: userId, username, message, date };
         // Publish message to RabbitMQ exchange
-        await this.channel.assertExchange('chat-messages', 'direct', { durable: true });
-        await this.channel.publish('chat-messages', '', Buffer.from(JSON.stringify(newMessage)), { persistent: true });
+        await this.channel.assertExchange(this.exchangeName, 'direct', { durable: true });
+        await this.channel.publish(this.exchangeName, '', Buffer.from(JSON.stringify(newMessage)), { persistent: true });
         return newMessage;
     }
 
+    async getMessages(): Promise<{ userId: number; username: string; message: string; date: string; }[]> {
+      return this.messages;
+    }
+
     async consumeMessagesFromRabbitMQ() {
-        await this.channel.assertExchange('chat-messages', 'direct', { durable: false });
-        const queue = await this.channel.assertQueue('', { exclusive: true });
-        await this.channel.bindQueue(queue.queue, 'chat-messages', '');
+        await this.channel.assertExchange(this.exchangeName, 'direct', { durable: true });
+
+        await this.channel.assertQueue(this.queueName, { durable: true });
+        
+        // Bind the queue to the exchange
+        await this.channel.bindQueue(this.queueName, this.exchangeName, '');
 
         console.log('Waiting for messages...');
-        this.channel.consume(queue.queue, (msg: any) => {
+        this.channel.consume(this.queueName, (msg: any) => {
             if (msg.content) {
                 const receivedMessage: { userId: number; username: string; message: string; date: string } = JSON.parse(msg.content.toString());
-                //console.log('Received message:', receivedMessage);
-                //push message to chat room
-                
-                this.chatRoom.messages.push(receivedMessage);
-                console.log('Message pushed to chat room:', receivedMessage);
-                
+                this.messages.push(receivedMessage);
+                console.log('Received message:', receivedMessage);
+            
             }
         }, { noAck: true });
     }

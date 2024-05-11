@@ -12,7 +12,7 @@ export class UserRouter {
     private configureRoutes(): void {
         this.router.get('/', async (req, res, next) => {
             try {
-                const result = await this.userController.getByUsername(req.body.username);
+                const result = await this.userController.getByUsername(req.query.username as string);
                 if (result) {
                     res.status(200).json(result);
                 } else {

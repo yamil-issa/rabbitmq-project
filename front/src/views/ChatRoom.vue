@@ -21,67 +21,56 @@
 
   export default {
     data() {
-     
+      return {
+        messages: [],
+        newMessage: '',
+        username: ''
+      };
     },
     
-
-        
-
-    methods: {
-      sendMessage() {
-        const endpoint = `http://localhost:9000/api/chat-room/${this.chatRoom.id}/send-message`;
-        console.log('Sending message:', this.newMessage);
-  
-        // call the backend API to add the message to the chat room
-        axios.post(endpoint, {
-          userId: this.userId,
-          message: this.newMessage,
-        }, {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        })
-          .then((response) => {
-            // Update the chatRoom.messages array with the new message
-            axios.get(`http://localhost:9000/api/chat-room/${this.chatRoom.id}`).then((response) => {
-            const data = response.data || {};
-            // Update the chatRoom data with the fetched details
-            this.chatRoom = {
-              id: data.id,
-              chatRoomName: data.chatRoomName,
-              participants: data.participants || [],
-              messages: data.messages || [],
-            };
-            this.messages = this.chatRoom.messages;
-            // Clear the newMessage
-            this.newMessage = '';
-            
-          });
-            console.log('Message added successfully:', response.data);
-          })
-          .catch((error) => {
-            console.error('Error adding message:', error);
-          });
+      mounted() {
+        // Fetch initial messages when component is mounted
+        this.getMessages();
+        this.username = this.$route.query.pseudo;
       },
 
-
-      fetchLatestMessages() {
-        axios.get(`http://localhost:9000/api/chat-room/${this.chatRoom.id}`).then((response) => {
-          const data = response.data || {};
-          // Update the chatRoom data with the fetched details
-          this.chatRoom = {
-            id: data.id,
-            chatRoomName: data.chatRoomName,
-            participants: data.participants || [],
-            messages: data.messages || [],
-          };
-          this.messages = this.chatRoom.messages;
-        });
-      },
-  },
-};
-  </script>
   
+
+      methods: {
+      async sendMessage() {
+        try {
+          const endpoint = `http://localhost:9000/api/chat-room/send-message`;
+          console.log('Sending message:', this.newMessage);
+          console.log('Username:', this.username);
+
+          // Call the backend API to add the message to the chat room
+          const response = await axios.post(endpoint, {
+            username: this.username,
+            message: this.newMessage,
+          });
+
+          // Update messages with the new message
+          this.messages.push(response.data);
+
+          // Clear the newMessage input field
+          this.newMessage = '';
+        } catch (error) {
+          console.error('Error sending message:', error);
+        }
+      },
+      async getMessages() {
+        try {
+          const endpoint = `http://localhost:9000/api/chat-room/get-messages`;
+          const response = await axios.get(endpoint);
+          // Update messages with the fetched messages
+          this.messages = response.data;
+        } catch (error) {
+          console.error('Error fetching messages:', error);
+        }
+      },
+    },
+  };
+</script>
   <style scoped>
   /* Add your styles here to make it visually appealing */
   .chat-view {

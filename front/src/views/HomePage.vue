@@ -35,7 +35,9 @@ export default {
     async getUser() {
       try {
         const response = await axios.get('http://localhost:9000/api/user', {
-          data: { username: this.pseudo },
+          params: {
+            username: this.pseudo,
+          }
         });
         return response.data;
       } catch (error) {
@@ -55,12 +57,12 @@ export default {
 
     handleUser() {
       // check if the user exists if not create it
-      const user = this.getUser();
-      if (!user) {
-        this.createUser();
-      }
-
-    }
+      this.getUser().then(user => {
+        if (!user) {
+          this.createUser();
+        }
+      });
+    } ,
   },
 };
 </script>
