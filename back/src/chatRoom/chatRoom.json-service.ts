@@ -9,7 +9,6 @@ export class ChatRoomJsonService implements ChatRoomService {
     private exchangeName = "chat-exchange";
     private messages: { userId: number; username: string; message: string; date: string; }[] = [];
 
-
     constructor() {
         this.setupRabbitMQ()
             .then(() => this.consumeMessagesFromRabbitMQ())
@@ -61,10 +60,6 @@ export class ChatRoomJsonService implements ChatRoomService {
     }
 
     
-    joinChatRoom(username: string): boolean {
-        return false;
-        
-    }
 
     async sendMessage(username: string, message: string): Promise<{ userId: number; username: string; message: string; date: string; } | null> {
         const userJsonService = UserJsonService.getInstance();
@@ -87,27 +82,10 @@ export class ChatRoomJsonService implements ChatRoomService {
     }
 
     async getMessages(): Promise<{ userId: number; username: string; message: string; date: string; }[]> {
-        if (this.messages.length === 0) {
-            await this.fetchMessagesFromRabbitMQ();
-        }
+        // Return the messages
         return this.messages;
     }
 
-    async fetchMessagesFromRabbitMQ(): Promise<void> {
-        try {
-            const messages = await this.channel.get(this.queueName, { noAck: true });
-            if (messages) {
-                messages.forEach((msg: any) => {
-                    const receivedMessage: { userId: number; username: string; message: string; date: string } = JSON.parse(msg.content.toString());
-                    this.messages.push(receivedMessage);
-                    console.log('Received message:', receivedMessage);
-                });
-            }
-        } catch (error) {
-            console.error('Error fetching messages from RabbitMQ:', error);
-            throw new Error('Error fetching messages from RabbitMQ: ' + error);
-        }
-    }
 
 
     async consumeMessagesFromRabbitMQ() {
@@ -126,6 +104,8 @@ export class ChatRoomJsonService implements ChatRoomService {
                 console.log('Received message:', receivedMessage);
             
             }
-        }, { noAck: true });
+        }, { noAck: false });
     }
+
+    
 }

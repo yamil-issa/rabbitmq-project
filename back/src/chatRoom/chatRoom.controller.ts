@@ -8,7 +8,7 @@ export class ChatRoomController {
 
     async sendMessage(username: string, message: string): Promise<{ userId: number; username: string; message: string; date: string; } | null> {
         if (isNotDefined(message)) {
-            throw new Error("message is empty.");
+            throw new Error("message cannot be empty.");
         }
         const sentMessage = await this.chatRoomService.sendMessage(username, message);
         return sentMessage; 

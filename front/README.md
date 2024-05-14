@@ -6,11 +6,7 @@ This directory contains the front-end code for the chat application.
 
 - [Introduction](#introduction)
 - [Installation](#installation)
-- [Usage](#usage)
-- [Folder Structure](#folder-structure)
 - [Technologies](#technologies)
-- [Contributing](#contributing)
-- [License](#license)
 
 ## Introduction
 
@@ -18,30 +14,19 @@ The front-end of the chat application is built using Vue.js to provide a dynamic
 
 ## Installation
 
-1. Navigate to the `frontend` directory.
+1. Navigate to the `front` directory.
 2. Install dependencies: `npm install`.
-3. Start the front-end: `npm run serve`.
+3. Start the front-end: `npm run start`.
 
 ## Usage
 
 1. Access the application in your browser.
-2. Choose a chat room and start chatting.
+2. Enter your name to acces the chat room and start chatting.
 
-## Folder Structure
-
-- `/src`: Contains the source code of the Vue.js application.
-- `/public`: Contains static assets and the main HTML file.
 
 ## Technologies
 
-- Vue.js
-- Axios
+- Express.js
+- RabbitMq
 
-## Contributing
-
-Feel free to contribute to the front-end. See [CONTRIBUTING.md](frontend/CONTRIBUTING.md) for guidelines.
-
-## License
-
-This front-end code is licensed under the [MIT License](frontend/LICENSE).
 
