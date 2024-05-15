@@ -3,6 +3,7 @@
 This project is a chat application that allows users to join a chat room, send messages, and interact in real-time.
 
 # Configuration
+- start rabbitmq on docker: `docker compose up --build`
 - to start the front: `cd front`,  `npm install`
 - to start the front: `cd back`,  `npm install`
 
@@ -10,7 +11,7 @@ This project is a chat application that allows users to join a chat room, send m
 # Run
 - to start the front: `cd front`,  `npm start`
 - to start the back: `cd back`,  `npm start`
-- You can access to the app here : `localhost:5173`
+- You see access the app here : `localhost:5173`
 
 # Chat Application Architecture
 
