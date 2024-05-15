@@ -5,8 +5,10 @@
   "main": "index.js",
   "scripts": {
     "test": "jest --passWithNoTests",
-    "start": "npx ts-node-dev src/app.ts",
-    "format": "prettier --write \"src/**/*.ts\""
+    "dev": "npx ts-node-dev src/app.ts",
+    "build": "rimraf ./dist && tsc",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "start": "npm run build && node dist/app.js"
   },
   "keywords": [],
   "author": "",

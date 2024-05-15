@@ -2,6 +2,15 @@
 
 This project is a chat application that allows users to join a chat room, send messages, and interact in real-time.
 
+# Configuration
+- to start the front: `cd front`,  `npm install`
+- to start the front: `cd back`,  `npm install`
+
+
+# Run
+- to start the front: `cd front`,  `npm start`
+- to start the back: `cd back`,  `npm start`
+- You can access to the app here : `localhost:5173`
 
 # Chat Application Architecture
 
@@ -46,7 +55,6 @@ This project is a chat application that allows users to join a chat room, send m
 1. **`ChatRoomJsonService` sets up a consumer to listen to messages from the `chat-messages` queue.**
    - Consumes messages from: `chat-messages` queue
 2. **When a message is received from the queue, it is pushed to an in-memory array `messages`.**
-3. **The received message is also logged to the console for monitoring purposes.**
 
 ## Code Structure
 
