@@ -7,8 +7,8 @@ This project is a chat application that allows users to join a chat room, send m
 
 # Configuration
 - to start rabbitmq on docker: `docker compose up --build`
-- to start the front: `cd front`,  `npm install`
-- to start the front: `cd back`,  `npm install`
+- to install the dependancies for the frontend: `cd front`,  `npm install`
+- to install the dependancies for the backend: `cd back`,  `npm install`
 
 
 # Run
