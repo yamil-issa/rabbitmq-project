@@ -2,6 +2,9 @@
 
 This project is a chat application that allows users to join a chat room, send messages, and interact in real-time.
 
+## Group members: 
+- Yamil ISSA
+
 # Configuration
 - to start rabbitmq on docker: `docker compose up --build`
 - to start the front: `cd front`,  `npm install`
